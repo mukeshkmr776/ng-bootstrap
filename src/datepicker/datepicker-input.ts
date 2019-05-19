@@ -64,7 +64,6 @@ const NGB_DATEPICKER_VALIDATOR = {
 })
 export class NgbInputDatepicker implements OnChanges,
     OnDestroy, ControlValueAccessor, Validator {
-  private _closed$ = new Subject();
   private _cRef: ComponentRef<NgbDatepicker> = null;
   private _disabled = false;
   private _model: NgbDate;
@@ -174,6 +173,8 @@ export class NgbInputDatepicker implements OnChanges,
    * Accepts an array of strings or a string with space separated possible values.
    *
    * The default order of preference is `"bottom-left bottom-right top-left top-right"`
+   *
+   * Please see the [positioning overview](#/positioning) for more details.
    */
   @Input() placement: PlacementArray = ['bottom-left', 'bottom-right', 'top-left', 'top-right'];
 
@@ -205,6 +206,13 @@ export class NgbInputDatepicker implements OnChanges,
   @Input() container: string;
 
   /**
+   * A css selector or html element specifying the element the datepicker popup should be positioned against.
+   *
+   * By default the input is used as a target.
+   */
+  @Input() positionTarget: string | HTMLElement;
+
+  /**
    * An event emitted when user selects a date using keyboard or mouse.
    *
    * The payload of the event is currently selected `NgbDate`.
@@ -219,6 +227,11 @@ export class NgbInputDatepicker implements OnChanges,
    * See [`NgbDatepickerNavigateEvent`](#/components/datepicker/api#NgbDatepickerNavigateEvent) for the payload info.
    */
   @Output() navigate = new EventEmitter<NgbDatepickerNavigateEvent>();
+
+  /**
+   * An event fired after closing datepicker window.
+   */
+  @Output() closed = new EventEmitter<void>();
 
   @Input()
   get disabled() {
@@ -243,12 +256,7 @@ export class NgbInputDatepicker implements OnChanges,
       private _ngZone: NgZone, private _service: NgbDatepickerService, private _calendar: NgbCalendar,
       private _dateAdapter: NgbDateAdapter<any>, @Inject(DOCUMENT) private _document: any,
       private _changeDetector: ChangeDetectorRef) {
-    this._zoneSubscription = _ngZone.onStable.subscribe(() => {
-      if (this._cRef) {
-        positionElements(
-            this._elRef.nativeElement, this._cRef.location.nativeElement, this.placement, this.container === 'body');
-      }
-    });
+    this._zoneSubscription = _ngZone.onStable.subscribe(() => this._updatePopupPosition());
   }
 
   registerOnChange(fn: (value: any) => any): void { this._onChange = fn; }
@@ -334,11 +342,11 @@ export class NgbInputDatepicker implements OnChanges,
       }
 
       // focus handling
-      ngbFocusTrap(this._cRef.location.nativeElement, this._closed$, true);
+      ngbFocusTrap(this._cRef.location.nativeElement, this.closed, true);
       this._cRef.instance.focus();
 
       ngbAutoClose(
-          this._ngZone, this._document, this.autoClose, () => this.close(), this._closed$, [],
+          this._ngZone, this._document, this.autoClose, () => this.close(), this.closed, [],
           [this._elRef.nativeElement, this._cRef.location.nativeElement]);
     }
   }
@@ -350,7 +358,7 @@ export class NgbInputDatepicker implements OnChanges,
     if (this.isOpen()) {
       this._vcRef.remove(this._vcRef.indexOf(this._cRef.hostView));
       this._cRef = null;
-      this._closed$.next();
+      this.closed.emit();
       this._changeDetector.markForCheck();
     }
   }
@@ -406,8 +414,11 @@ export class NgbInputDatepicker implements OnChanges,
 
   private _applyPopupStyling(nativeElement: any) {
     this._renderer.addClass(nativeElement, 'dropdown-menu');
-    this._renderer.setStyle(nativeElement, 'padding', '0');
     this._renderer.addClass(nativeElement, 'show');
+
+    if (this.container === 'body') {
+      this._renderer.addClass(nativeElement, 'ngb-dp-body');
+    }
   }
 
   private _subscribeForDatepickerOutputs(datepickerInstance: NgbDatepicker) {
@@ -433,5 +444,26 @@ export class NgbInputDatepicker implements OnChanges,
   private _fromDateStruct(date: NgbDateStruct): NgbDate {
     const ngbDate = date ? new NgbDate(date.year, date.month, date.day) : null;
     return this._calendar.isValid(ngbDate) ? ngbDate : null;
+  }
+
+  private _updatePopupPosition() {
+    if (!this._cRef) {
+      return;
+    }
+
+    let hostElement: HTMLElement;
+    if (typeof this.positionTarget === 'string') {
+      hostElement = window.document.querySelector(this.positionTarget);
+    } else if (this.positionTarget instanceof HTMLElement) {
+      hostElement = this.positionTarget;
+    } else {
+      hostElement = this._elRef.nativeElement;
+    }
+
+    if (this.positionTarget && !hostElement) {
+      throw new Error('ngbDatepicker could not find element declared in [positionTarget] to position against.');
+    }
+
+    positionElements(hostElement, this._cRef.location.nativeElement, this.placement, this.container === 'body');
   }
 }

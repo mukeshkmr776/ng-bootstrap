@@ -10,6 +10,7 @@ import {NgbInputDatepicker} from './datepicker-input';
 import {NgbDatepicker} from './datepicker';
 import {NgbDateStruct} from './ngb-date-struct';
 import {NgbDate} from './ngb-date';
+import * as positioning from 'src/util/positioning';
 
 const createTestCmpt = (html: string) =>
     createGenericTestComponent(html, TestComponent) as ComponentFixture<TestComponent>;
@@ -674,6 +675,21 @@ describe('NgbInputDatepicker', () => {
       });
     });
 
+    it('should relay the "closed" event', () => {
+      const fixture = createTestCmpt(`<input ngbDatepicker (closed)="onClose()">`);
+      const dpInput = fixture.debugElement.query(By.directive(NgbInputDatepicker)).injector.get(NgbInputDatepicker);
+
+      spyOn(fixture.componentInstance, 'onClose');
+
+      // open
+      dpInput.open();
+      fixture.detectChanges();
+
+      // close
+      dpInput.close();
+      expect(fixture.componentInstance.onClose).toHaveBeenCalledTimes(1);
+    });
+
     it('should emit both "dateSelect" and "onModelChange" events', () => {
       const fixture = createTestCmpt(`
           <input ngbDatepicker ngModel [startDate]="{year: 2018, month: 3}"
@@ -749,6 +765,96 @@ describe('NgbInputDatepicker', () => {
       expect(fixture.nativeElement.querySelector('ngb-datepicker')).toBeNull();
       expect(document.querySelector(selector).querySelector('ngb-datepicker')).toBeNull();
     });
+
+    it('should add .ngb-dp-body class when attached to body', () => {
+      const fixture = createTestCmpt(`<input ngbDatepicker #d="ngbDatepicker" [container]="container">`);
+      const dpInput = fixture.debugElement.query(By.directive(NgbInputDatepicker)).injector.get(NgbInputDatepicker);
+
+      // No container specified
+      dpInput.open();
+
+      let element = document.querySelector('ngb-datepicker') as HTMLElement;
+      expect(element).not.toBeNull();
+      expect(element).not.toHaveCssClass('ngb-dp-body');
+
+      // Body
+      dpInput.close();
+      fixture.componentInstance.container = 'body';
+      fixture.detectChanges();
+      dpInput.open();
+
+      element = document.querySelector('ngb-datepicker') as HTMLElement;
+      expect(element).not.toBeNull();
+      expect(element).toHaveCssClass('ngb-dp-body');
+    });
+  });
+
+  describe('positionTarget', () => {
+
+    let positionElementsSpy: jasmine.Spy;
+
+    beforeEach(() => {
+      positionElementsSpy = jasmine.createSpy('positionElementsSpy');
+      spyOnProperty(positioning, 'positionElements').and.returnValue(positionElementsSpy);
+    });
+
+    it('should position popup by input if no target provided (default)', () => {
+      const fixture = createTestCmpt(`
+          <input ngbDatepicker #d="ngbDatepicker">
+          <button (click)="open(d)">Open</button>
+      `);
+      const input = fixture.nativeElement.querySelector('input');
+
+      // open date-picker
+      const button = fixture.nativeElement.querySelector('button');
+      button.click();
+      fixture.detectChanges();
+
+      expect(positionElementsSpy).toHaveBeenCalled();
+      expect(positionElementsSpy.calls.argsFor(0)[0]).toBe(input);
+    });
+
+    it('should position popup by html element', () => {
+      const fixture = createTestCmpt(`
+          <input ngbDatepicker #d="ngbDatepicker" [positionTarget]="myButton">
+          <button #myButton (click)="open(d)">Open</button>
+      `);
+
+      // open date-picker
+      const button = fixture.nativeElement.querySelector('button');
+      button.click();
+      fixture.detectChanges();
+
+      expect(positionElementsSpy).toHaveBeenCalled();
+      expect(positionElementsSpy.calls.argsFor(0)[0]).toBe(button);
+    });
+
+    it('should position popup by css selector', () => {
+      const selector = '#myButton';
+      const fixture = createTestCmpt(`
+          <input ngbDatepicker #d="ngbDatepicker" positionTarget="${selector}">
+          <button id="myButton" (click)="open(d)">Open</button>
+      `);
+
+      // open date-picker
+      const button = fixture.nativeElement.querySelector(selector);
+      button.click();
+      fixture.detectChanges();
+
+      expect(positionElementsSpy).toHaveBeenCalled();
+      expect(positionElementsSpy.calls.argsFor(0)[0]).toBe(button);
+    });
+
+    it('should throw error if target element does not exists', fakeAsync(() => {
+         const fixture = createTestCmpt(`<input ngbDatepicker #d="ngbDatepicker" positionTarget="#nobody">`);
+         const dpInput = fixture.debugElement.query(By.directive(NgbInputDatepicker)).injector.get(NgbInputDatepicker);
+
+         dpInput.open();
+         fixture.detectChanges();
+
+         expect(() => tick())
+             .toThrowError('ngbDatepicker could not find element declared in [positionTarget] to position against.');
+       }));
   });
 
   describe('Native adapter', () => {
@@ -803,6 +909,7 @@ class TestNativeComponent {
 
 @Component({selector: 'test-cmp', template: ''})
 class TestComponent {
+  container;
   date: NgbDateStruct;
   isDisabled;
 
@@ -811,6 +918,8 @@ class TestComponent {
   onDateSelect() {}
 
   onModelChange() {}
+
+  onClose() {}
 
   open(d: NgbInputDatepicker) { d.open(); }
 

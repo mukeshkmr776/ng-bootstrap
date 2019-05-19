@@ -1,8 +1,7 @@
 import {ComponentFixture, inject, TestBed} from '@angular/core/testing';
-import {createGenericTestComponent, createKeyEvent} from '../test/common';
-import {Key} from '../util/key';
+import {createGenericTestComponent} from '../test/common';
 
-import {ChangeDetectionStrategy, Component, DebugElement} from '@angular/core';
+import {Component} from '@angular/core';
 
 import {NgbDropdown, NgbDropdownModule} from './dropdown.module';
 import {NgbDropdownConfig} from './dropdown-config';
@@ -17,43 +16,6 @@ function getDropdownEl(tc) {
 
 function getMenuEl(tc) {
   return tc.querySelector(`[ngbDropdownMenu]`);
-}
-
-function createFakeEscapeKeyUpEvent(): Event {
-  return createKeyEvent(Key.Escape);
-}
-
-function createKeyDownEvent(key: number, target?: HTMLElement) {
-  const event = {which: key, preventDefault: () => {}, stopPropagation: () => {}, target};
-  spyOn(event, 'preventDefault');
-  spyOn(event, 'stopPropagation');
-  return event;
-}
-
-function triggerKeyDownEvent(element: DebugElement, key: number, target?: HTMLElement) {
-  const event = createKeyDownEvent(key, target);
-  switch (key) {
-    case Key.ArrowDown:
-      element.triggerEventHandler('keydown.ArrowDown', event);
-      break;
-    case Key.ArrowUp:
-      element.triggerEventHandler('keydown.ArrowDown', event);
-      break;
-    case Key.Home:
-      element.triggerEventHandler('keydown.Home', event);
-      break;
-    case Key.End:
-      element.triggerEventHandler('keydown.End', event);
-      break;
-  }
-}
-
-function getDebugInput(element: DebugElement): DebugElement {
-  return element.query(By.directive(NgbDropdown));
-}
-
-function getDebugInputs(element: DebugElement): DebugElement[] {
-  return element.queryAll(By.directive(NgbDropdown));
 }
 
 const jasmineMatchers = {
@@ -359,7 +321,7 @@ describe('ngb-dropdown-toggle', () => {
 
   it(`should second placement if the first one doesn't fit`, () => {
     const html = `
-      <div ngbDropdown placement="left right">
+      <div ngbDropdown placement="left-top right-top">
           <button ngbDropdownToggle>
             <span class="toggle">Toggle dropdown</span>
           </button>
@@ -378,6 +340,63 @@ describe('ngb-dropdown-toggle', () => {
     const targetElement = compiled.querySelector('button');
     expect(Math.round(dropdownEl.getBoundingClientRect().left))
         .toBe(Math.round(targetElement.getBoundingClientRect().right), 'Wrong dropdown placement');
+
+  });
+
+  describe('ngb-dropdown-navbar', () => {
+    it(`shouldn't position the menu`, () => {
+      const html = `
+      <nav class="navbar">
+        <div class="collapse navbar-collapse" id="navbarNav">
+          <ul class="navbar-nav">
+            <li class="nav-item" ngbDropdown placement="bottom-right">
+              <a class="nav-link" ngbDropdownToggle role="button">Open</a>
+              <div ngbDropdownMenu>
+                <div class="dropdown-item">Item</div>
+              </div>
+            </li>
+          </ul>
+        </div>
+      </nav>
+    `;
+
+      const fixture = createTestComponent(html);
+      const compiled = fixture.nativeElement;
+      const dropdown = fixture.debugElement.query(By.directive(NgbDropdown)).injector.get(NgbDropdown);
+      dropdown.open();
+      fixture.detectChanges();
+      const dropdownEl: HTMLElement = compiled.querySelector('[ngbdropdownmenu]');
+
+      expect(dropdownEl.getAttribute('style')).toBeNull(`The dropdown element shouldn't have calculated styles`);
+
+    });
+
+    it(`can override the defaut display value`, () => {
+      const html = `
+      <nav class="navbar">
+        <div class="collapse navbar-collapse" id="navbarNav">
+          <ul class="navbar-nav">
+            <li class="nav-item" ngbDropdown placement="bottom-right" display="dynamic">
+              <a class="nav-link" ngbDropdownToggle role="button">Open</a>
+              <div ngbDropdownMenu>
+                <div class="dropdown-item">Item</div>
+              </div>
+            </li>
+          </ul>
+        </div>
+      </nav>
+    `;
+
+      const fixture = createTestComponent(html);
+      const compiled = fixture.nativeElement;
+      const dropdown = fixture.debugElement.query(By.directive(NgbDropdown)).injector.get(NgbDropdown);
+      dropdown.open();
+      fixture.detectChanges();
+      const dropdownEl: HTMLElement = compiled.querySelector('[ngbdropdownmenu]');
+
+      expect(dropdownEl.getAttribute('style')).not.toBeNull(`The dropdown element should have calculated styles`);
+
+    });
 
   });
 

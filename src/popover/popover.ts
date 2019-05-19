@@ -19,7 +19,8 @@ import {
   NgZone,
   SimpleChanges,
   ViewEncapsulation,
-  ChangeDetectorRef
+  ChangeDetectorRef,
+  ApplicationRef
 } from '@angular/core';
 import {DOCUMENT} from '@angular/common';
 
@@ -97,6 +98,8 @@ export class NgbPopover implements OnInit, OnDestroy, OnChanges {
    * Accepts an array of strings or a string with space separated possible values.
    *
    * The default order of preference is `"auto"` (same as the sequence above).
+   *
+   * Please see the [positioning overview](#/positioning) for more details.
    */
   @Input() placement: PlacementArray;
 
@@ -171,7 +174,8 @@ export class NgbPopover implements OnInit, OnDestroy, OnChanges {
   constructor(
       private _elementRef: ElementRef<HTMLElement>, private _renderer: Renderer2, injector: Injector,
       componentFactoryResolver: ComponentFactoryResolver, viewContainerRef: ViewContainerRef, config: NgbPopoverConfig,
-      private _ngZone: NgZone, @Inject(DOCUMENT) private _document: any, private _changeDetector: ChangeDetectorRef) {
+      private _ngZone: NgZone, @Inject(DOCUMENT) private _document: any, private _changeDetector: ChangeDetectorRef,
+      private _applicationRef: ApplicationRef) {
     this.autoClose = config.autoClose;
     this.placement = config.placement;
     this.triggers = config.triggers;
@@ -181,7 +185,7 @@ export class NgbPopover implements OnInit, OnDestroy, OnChanges {
     this.openDelay = config.openDelay;
     this.closeDelay = config.closeDelay;
     this._popupService = new PopupService<NgbPopoverWindow>(
-        NgbPopoverWindow, injector, viewContainerRef, _renderer, componentFactoryResolver);
+        NgbPopoverWindow, injector, viewContainerRef, _renderer, componentFactoryResolver, _applicationRef);
 
     this._zoneSubscription = _ngZone.onStable.subscribe(() => {
       if (this._windowRef) {
@@ -212,7 +216,16 @@ export class NgbPopover implements OnInit, OnDestroy, OnChanges {
         this._document.querySelector(this.container).appendChild(this._windowRef.location.nativeElement);
       }
 
-      // apply styling to set basic css-classes on target element, before going for positioning
+      // We need to detect changes, because we don't know where .open() might be called from.
+      // Ex. opening popover from one of lifecycle hooks that run after the CD
+      // (say from ngAfterViewInit) will result in 'ExpressionHasChanged' exception
+      this._windowRef.changeDetectorRef.detectChanges();
+
+      // We need to mark for check, because popover won't work inside the OnPush component.
+      // Ex. when we use expression like `{{ popover.isOpen() : 'opened' : 'closed' }}`
+      // inside the template of an OnPush component and we change the popover from
+      // open -> closed, the expression in question won't be updated unless we explicitly
+      // mark the parent component to be checked.
       this._windowRef.changeDetectorRef.markForCheck();
 
       ngbAutoClose(

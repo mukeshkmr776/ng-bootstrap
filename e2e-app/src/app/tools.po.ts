@@ -19,6 +19,15 @@ export const rightClick = async(el: ElementFinder) => {
 };
 
 /**
+ * Clicks on the given element with a given offset.
+ * @param el element to right click on
+ * @param offset {x, y} position, relative to the element
+ */
+export const offsetClick = async(el: ElementFinder, offset) => {
+  await browser.actions().mouseMove(el, offset).click().perform();
+};
+
+/**
  * Expects provided element to be focused
  *
  * @param el element to check
@@ -43,3 +52,17 @@ export const openUrl = async(url: string) => {
   await $(`#navigate-home`).click();
   await $(`#navigate-${url.replace('/', '-')}`).click();
 };
+
+/**
+ * Returns the caret position ({start, end}) of the given element (must be an input).
+ */
+export async function getCaretPosition(element: ElementFinder) {
+  const[start, end] = await browser.executeScript<[number, number]>(
+      `
+    var element = arguments[0];
+    return [element.selectionStart, element.selectionEnd];
+  `,
+      element.getWebElement());
+
+  return {start, end};
+}

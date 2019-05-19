@@ -17,7 +17,8 @@ import {
   ComponentFactoryResolver,
   NgZone,
   ViewEncapsulation,
-  ChangeDetectorRef
+  ChangeDetectorRef,
+  ApplicationRef
 } from '@angular/core';
 import {DOCUMENT} from '@angular/common';
 
@@ -71,6 +72,8 @@ export class NgbTooltip implements OnInit, OnDestroy {
    * Accepts an array of strings or a string with space separated possible values.
    *
    * The default order of preference is `"auto"` (same as the sequence above).
+   *
+   * Please see the [positioning overview](#/positioning) for more details.
    */
   @Input() placement: PlacementArray;
 
@@ -136,7 +139,8 @@ export class NgbTooltip implements OnInit, OnDestroy {
   constructor(
       private _elementRef: ElementRef<HTMLElement>, private _renderer: Renderer2, injector: Injector,
       componentFactoryResolver: ComponentFactoryResolver, viewContainerRef: ViewContainerRef, config: NgbTooltipConfig,
-      private _ngZone: NgZone, @Inject(DOCUMENT) private _document: any, private _changeDetector: ChangeDetectorRef) {
+      private _ngZone: NgZone, @Inject(DOCUMENT) private _document: any, private _changeDetector: ChangeDetectorRef,
+      private _applicationRef: ApplicationRef) {
     this.autoClose = config.autoClose;
     this.placement = config.placement;
     this.triggers = config.triggers;
@@ -146,7 +150,7 @@ export class NgbTooltip implements OnInit, OnDestroy {
     this.openDelay = config.openDelay;
     this.closeDelay = config.closeDelay;
     this._popupService = new PopupService<NgbTooltipWindow>(
-        NgbTooltipWindow, injector, viewContainerRef, _renderer, componentFactoryResolver);
+        NgbTooltipWindow, injector, viewContainerRef, _renderer, componentFactoryResolver, _applicationRef);
 
     this._zoneSubscription = _ngZone.onStable.subscribe(() => {
       if (this._windowRef) {
@@ -190,7 +194,16 @@ export class NgbTooltip implements OnInit, OnDestroy {
         this._document.querySelector(this.container).appendChild(this._windowRef.location.nativeElement);
       }
 
-      // apply styling to set basic css-classes on target element, before going for positioning
+      // We need to detect changes, because we don't know where .open() might be called from.
+      // Ex. opening tooltip from one of lifecycle hooks that run after the CD
+      // (say from ngAfterViewInit) will result in 'ExpressionHasChanged' exception
+      this._windowRef.changeDetectorRef.detectChanges();
+
+      // We need to mark for check, because tooltip won't work inside the OnPush component.
+      // Ex. when we use expression like `{{ tooltip.isOpen() : 'opened' : 'closed' }}`
+      // inside the template of an OnPush component and we change the tooltip from
+      // open -> closed, the expression in question won't be updated unless we explicitly
+      // mark the parent component to be checked.
       this._windowRef.changeDetectorRef.markForCheck();
 
       ngbAutoClose(

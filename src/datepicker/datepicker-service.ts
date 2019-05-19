@@ -10,6 +10,7 @@ import {
   checkDateInRange,
   checkMinBeforeMax,
   isChangedDate,
+  isChangedMonth,
   isDateSelectable,
   generateSelectBoxYears,
   generateSelectBoxMonths,
@@ -128,12 +129,10 @@ export class NgbDatepickerService {
 
   open(date: NgbDate) {
     const firstDate = this.toValidDate(date, this._calendar.getToday());
-    if (!this._state.disabled) {
+    if (!this._state.disabled && (!this._state.firstDate || isChangedMonth(this._state.firstDate, date))) {
       this._nextState({firstDate});
     }
   }
-
-  reset(state: DatepickerViewModel) { this._state = state; }
 
   select(date: NgbDate, options: {emitEvent?: boolean} = {}) {
     const selectedDate = this.toValidDate(date, null);

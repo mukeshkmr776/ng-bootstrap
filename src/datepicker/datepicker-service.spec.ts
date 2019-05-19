@@ -1163,6 +1163,17 @@ describe('ngb-datepicker-service', () => {
       expect(model.months[0]).toBe(month);
       expect(getDay(0).date).toBe(date);
     });
+
+    it(`should not rebuild anything when opening dates from the same month`, () => {
+      service.open(new NgbDate(2017, 5, 5));
+      expect(model.months.length).toBe(1);
+      expect(model.firstDate).toEqual(new NgbDate(2017, 5, 1));
+      expect(mock.onNext).toHaveBeenCalledTimes(1);
+
+      service.open(new NgbDate(2017, 5, 5));  // new object, same date
+      service.open(new NgbDate(2017, 5, 1));  // another date
+      expect(mock.onNext).toHaveBeenCalledTimes(1);
+    });
   });
 
   describe(`selection handling`, () => {
@@ -1414,26 +1425,6 @@ describe('ngb-datepicker-service', () => {
     it('should return default value for an invalid NgbDate if provided', () => {
       expect(service.toValidDate(null, new NgbDate(1066, 6, 6))).toEqual(new NgbDate(1066, 6, 6));
       expect(service.toValidDate(null, null)).toEqual(null);
-    });
-  });
-
-  describe('reset()', () => {
-
-    it('should reset the service state', () => {
-      // open 2017
-      service.focus(new NgbDate(2017, 5, 1));
-      const oldDate = getDay(0).date;
-      const oldModel = model;
-      expect(oldDate).toEqual(new NgbDate(2017, 5, 1));
-
-      // open 2018
-      service.focus(new NgbDate(2018, 1, 1));
-      expect(getDay(0).date).toEqual(new NgbDate(2018, 1, 1));
-
-      // reset and update something that doesn't trigger navigation and month change
-      service.reset(oldModel);
-      service.navigation = 'none';
-      expect(getDay(0).date).toEqual(oldDate);
     });
   });
 });

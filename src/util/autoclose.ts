@@ -2,9 +2,13 @@ import {NgZone} from '@angular/core';
 import {fromEvent, Observable, race} from 'rxjs';
 import {delay, filter, map, takeUntil, withLatestFrom} from 'rxjs/operators';
 import {Key} from './key';
+import {closest} from './util';
 
-const isHTMLElementContainedIn = (element: HTMLElement, array?: HTMLElement[]) =>
+const isContainedIn = (element: HTMLElement, array?: HTMLElement[]) =>
     array ? array.some(item => item.contains(element)) : false;
+
+const matchesSelectorIfAny = (element: HTMLElement, selector?: string) =>
+    !selector || closest(element, selector) != null;
 
 // we'll have to use 'touch' events instead of 'mouse' events on iOS and add a more significant delay
 // to avoid re-opening when handling (click) on a toggling element
@@ -16,22 +20,22 @@ if (typeof navigator !== 'undefined') {
 
 export function ngbAutoClose(
     zone: NgZone, document: any, type: boolean | 'inside' | 'outside', close: () => void, closed$: Observable<any>,
-    insideElements: HTMLElement[], ignoreElements?: HTMLElement[]) {
+    insideElements: HTMLElement[], ignoreElements?: HTMLElement[], insideSelector?: string) {
   // closing on ESC and outside clicks
   if (type) {
     zone.runOutsideAngular(() => {
 
       const shouldCloseOnClick = (event: MouseEvent | TouchEvent) => {
         const element = event.target as HTMLElement;
-        if ((event instanceof MouseEvent && event.button === 2) || isHTMLElementContainedIn(element, ignoreElements)) {
+        if ((event instanceof MouseEvent && event.button === 2) || isContainedIn(element, ignoreElements)) {
           return false;
         }
         if (type === 'inside') {
-          return isHTMLElementContainedIn(element, insideElements);
+          return isContainedIn(element, insideElements) && matchesSelectorIfAny(element, insideSelector);
         } else if (type === 'outside') {
-          return !isHTMLElementContainedIn(element, insideElements);
+          return !isContainedIn(element, insideElements);
         } else /* if (type === true) */ {
-          return true;
+          return matchesSelectorIfAny(element, insideSelector) || !isContainedIn(element, insideElements);
         }
       };
 

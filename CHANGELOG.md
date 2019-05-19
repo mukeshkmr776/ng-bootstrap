@@ -1,3 +1,32 @@
+## [4.1.3](https://github.com/ng-bootstrap/ng-bootstrap/compare/4.1.2...4.1.3) (2019-05-13)
+
+
+### Bug Fixes
+
+* **alert:** project content before the closing button ([#3176](https://github.com/ng-bootstrap/ng-bootstrap/issues/3176)) ([3e1dba9](https://github.com/ng-bootstrap/ng-bootstrap/commit/3e1dba9)), closes [#3171](https://github.com/ng-bootstrap/ng-bootstrap/issues/3171)
+* **datepicker:** 'startDate' change was preventing arrow navigation ([#3179](https://github.com/ng-bootstrap/ng-bootstrap/issues/3179)) ([8bb6ddd](https://github.com/ng-bootstrap/ng-bootstrap/commit/8bb6ddd)), closes [#3178](https://github.com/ng-bootstrap/ng-bootstrap/issues/3178)
+* **datepicker:** don't change month content if navigation is prevented ([#3173](https://github.com/ng-bootstrap/ng-bootstrap/issues/3173)) ([c41da80](https://github.com/ng-bootstrap/ng-bootstrap/commit/c41da80))
+* **dropdown:** close dropdown menu on Enter / Space ([#3180](https://github.com/ng-bootstrap/ng-bootstrap/issues/3180)) ([5163d03](https://github.com/ng-bootstrap/ng-bootstrap/commit/5163d03)), closes [#3142](https://github.com/ng-bootstrap/ng-bootstrap/issues/3142)
+* **dropdown:** close dropdown only on dropdown elements click ([fa8e45f](https://github.com/ng-bootstrap/ng-bootstrap/commit/fa8e45f)), closes [#3063](https://github.com/ng-bootstrap/ng-bootstrap/issues/3063) [#3143](https://github.com/ng-bootstrap/ng-bootstrap/issues/3143)
+* **timepicker:** fix tab navigation & handling keyboard arrows ([#2053](https://github.com/ng-bootstrap/ng-bootstrap/issues/2053)) ([7efa35c](https://github.com/ng-bootstrap/ng-bootstrap/commit/7efa35c)), closes [#1836](https://github.com/ng-bootstrap/ng-bootstrap/issues/1836)
+
+
+
+## [4.1.2](https://github.com/ng-bootstrap/ng-bootstrap/compare/4.1.1...4.1.2) (2019-04-30)
+
+
+### Bug Fixes
+
+* **datepicker:** access view child from ngAfterViewInit ([#3152](https://github.com/ng-bootstrap/ng-bootstrap/issues/3152)) ([0e54eef](https://github.com/ng-bootstrap/ng-bootstrap/commit/0e54eef)), closes [#3150](https://github.com/ng-bootstrap/ng-bootstrap/issues/3150)
+* **datepicker:** export NgbDatepickerNavigateEvent correctly ([#3161](https://github.com/ng-bootstrap/ng-bootstrap/issues/3161)) ([e287a74](https://github.com/ng-bootstrap/ng-bootstrap/commit/e287a74)), closes [#3160](https://github.com/ng-bootstrap/ng-bootstrap/issues/3160)
+* **datepicker:** z-index set when appended to body ([00ee594](https://github.com/ng-bootstrap/ng-bootstrap/commit/00ee594)), closes [#3133](https://github.com/ng-bootstrap/ng-bootstrap/issues/3133)
+* **dropdown:** don't fail on keypress if there are no ngbDropdownItems ([b4b0222](https://github.com/ng-bootstrap/ng-bootstrap/commit/b4b0222)), closes [#3117](https://github.com/ng-bootstrap/ng-bootstrap/issues/3117)
+* **dropdown:** z-index set when appended to body ([#3157](https://github.com/ng-bootstrap/ng-bootstrap/issues/3157)) ([ec73fc2](https://github.com/ng-bootstrap/ng-bootstrap/commit/ec73fc2))
+* **popover:** open popover correctly from lifecycle hooks ([b3f8010](https://github.com/ng-bootstrap/ng-bootstrap/commit/b3f8010))
+* **tooltip:** open tooltip correctly from lifecycle hooks ([80beb3a](https://github.com/ng-bootstrap/ng-bootstrap/commit/80beb3a)), closes [#3130](https://github.com/ng-bootstrap/ng-bootstrap/issues/3130)
+
+
+
 ## [4.1.1](https://github.com/ng-bootstrap/ng-bootstrap/compare/4.1.0...4.1.1) (2019-04-01)
 
 
