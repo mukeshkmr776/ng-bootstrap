@@ -39,7 +39,13 @@ export class NgbdModalOptions {
     this.modalService.open(content, { size: 'lg' });
   }
 
+  openXl(content) { this.modalService.open(content, {size: 'xl'}); }
+
   openVerticallyCentered(content) {
     this.modalService.open(content, { centered: true });
+  }
+
+  openScrollableContent(longContent) {
+    this.modalService.open(longContent, { scrollable: true });
   }
 }

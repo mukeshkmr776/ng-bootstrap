@@ -9,8 +9,8 @@ import {
   Inject,
   Input,
   NgZone,
+  AfterContentInit,
   OnDestroy,
-  OnInit,
   Output,
   QueryList,
   Renderer2,
@@ -19,6 +19,7 @@ import {
 } from '@angular/core';
 import {DOCUMENT} from '@angular/common';
 import {Subject, Subscription} from 'rxjs';
+import {take} from 'rxjs/operators';
 
 import {Placement, PlacementArray, positionElements} from '../util/positioning';
 import {ngbAutoClose} from '../util/autoclose';
@@ -73,7 +74,7 @@ export class NgbDropdownMenu {
 
   @ContentChildren(NgbDropdownItem) menuItems: QueryList<NgbDropdownItem>;
 
-  constructor(@Inject(forwardRef(() => NgbDropdown)) public dropdown: NgbDropdown) {}
+  constructor(@Inject(forwardRef(() => NgbDropdown)) public dropdown) {}
 }
 
 /**
@@ -92,9 +93,7 @@ export class NgbDropdownMenu {
 export class NgbDropdownAnchor {
   anchorEl;
 
-  constructor(
-      @Inject(forwardRef(() => NgbDropdown)) public dropdown: NgbDropdown,
-      private _elementRef: ElementRef<HTMLElement>) {
+  constructor(@Inject(forwardRef(() => NgbDropdown)) public dropdown, private _elementRef: ElementRef<HTMLElement>) {
     this.anchorEl = _elementRef.nativeElement;
   }
 
@@ -121,7 +120,7 @@ export class NgbDropdownAnchor {
   providers: [{provide: NgbDropdownAnchor, useExisting: forwardRef(() => NgbDropdownToggle)}]
 })
 export class NgbDropdownToggle extends NgbDropdownAnchor {
-  constructor(@Inject(forwardRef(() => NgbDropdown)) dropdown: NgbDropdown, elementRef: ElementRef<HTMLElement>) {
+  constructor(@Inject(forwardRef(() => NgbDropdown)) dropdown, elementRef: ElementRef<HTMLElement>) {
     super(dropdown, elementRef);
   }
 }
@@ -130,15 +129,14 @@ export class NgbDropdownToggle extends NgbDropdownAnchor {
  * A directive that provides contextual overlays for displaying lists of links and more.
  */
 @Directive({selector: '[ngbDropdown]', exportAs: 'ngbDropdown', host: {'[class.show]': 'isOpen()'}})
-export class NgbDropdown implements OnInit, OnDestroy {
+export class NgbDropdown implements AfterContentInit, OnDestroy {
   private _closed$ = new Subject<void>();
   private _zoneSubscription: Subscription;
   private _bodyContainer: HTMLElement;
 
-  @ContentChild(NgbDropdownMenu) private _menu: NgbDropdownMenu;
-  @ContentChild(NgbDropdownMenu, {read: ElementRef}) private _menuElement: ElementRef;
-
-  @ContentChild(NgbDropdownAnchor) private _anchor: NgbDropdownAnchor;
+  @ContentChild(NgbDropdownMenu, {static: false}) private _menu: NgbDropdownMenu;
+  @ContentChild(NgbDropdownMenu, {read: ElementRef, static: false}) private _menuElement: ElementRef;
+  @ContentChild(NgbDropdownAnchor, {static: false}) private _anchor: NgbDropdownAnchor;
 
   /**
    * Indicates whether the dropdown should be closed when clicking one of dropdown items or pressing ESC.
@@ -179,7 +177,12 @@ export class NgbDropdown implements OnInit, OnDestroy {
   @Input() container: null | 'body';
 
   /**
-   * Enable or disable the dynamic positioning
+   * Enable or disable the dynamic positioning. The default value is dynamic unless the dropdown is used
+   * inside a Bootstrap navbar. If you need custom placement for a dropdown in a navbar, set it to
+   * dynamic explicitly. See the [positioning of dropdown](#/positioning#dropdown)
+   * and the [navbar demo](/#/components/dropdown/examples#navbar) for more details.
+   *
+   * @since 4.2.0
    */
   @Input() display: 'dynamic' | 'static';
 
@@ -205,11 +208,13 @@ export class NgbDropdown implements OnInit, OnDestroy {
     this._zoneSubscription = _ngZone.onStable.subscribe(() => { this._positionMenu(); });
   }
 
-  ngOnInit() {
-    this._applyPlacementClasses();
-    if (this._open) {
-      this._setCloseHandlers();
-    }
+  ngAfterContentInit() {
+    this._ngZone.onStable.pipe(take(1)).subscribe(() => {
+      this._applyPlacementClasses();
+      if (this._open) {
+        this._setCloseHandlers();
+      }
+    });
   }
 
   ngOnChanges(changes: SimpleChanges) {
@@ -240,9 +245,10 @@ export class NgbDropdown implements OnInit, OnDestroy {
   }
 
   private _setCloseHandlers() {
+    const anchor = this._anchor;
     ngbAutoClose(
         this._ngZone, this._document, this.autoClose, () => this.close(), this._closed$,
-        this._menu ? [this._menuElement.nativeElement] : [], this._anchor ? [this._anchor.getNativeElement()] : [],
+        this._menu ? [this._menuElement.nativeElement] : [], anchor ? [anchor.getNativeElement()] : [],
         '.dropdown-item,.dropdown-divider');
   }
 
@@ -341,14 +347,16 @@ export class NgbDropdown implements OnInit, OnDestroy {
   }
 
   private _getMenuElements(): HTMLElement[] {
-    if (this._menu == null) {
+    const menu = this._menu;
+    if (menu == null) {
       return [];
     }
-    return this._menu.menuItems.filter(item => !item.disabled).map(item => item.elementRef.nativeElement);
+    return menu.menuItems.filter(item => !item.disabled).map(item => item.elementRef.nativeElement);
   }
 
   private _positionMenu() {
-    if (this.isOpen() && this._menu) {
+    const menu = this._menu;
+    if (this.isOpen() && menu) {
       this._applyPlacementClasses(
           this.display === 'dynamic' ?
               positionElements(
@@ -364,9 +372,10 @@ export class NgbDropdown implements OnInit, OnDestroy {
 
   private _resetContainer() {
     const renderer = this._renderer;
-    if (this._menuElement) {
+    const menuElement = this._menuElement;
+    if (menuElement) {
       const dropdownElement = this._elementRef.nativeElement;
-      const dropdownMenuElement = this._menuElement.nativeElement;
+      const dropdownMenuElement = menuElement.nativeElement;
 
       renderer.appendChild(dropdownElement, dropdownMenuElement);
       renderer.removeStyle(dropdownMenuElement, 'position');
@@ -396,7 +405,8 @@ export class NgbDropdown implements OnInit, OnDestroy {
   }
 
   private _applyPlacementClasses(placement?: Placement) {
-    if (this._menu) {
+    const menu = this._menu;
+    if (menu) {
       if (!placement) {
         placement = this._getFirstPlacement(this.placement);
       }
@@ -407,7 +417,7 @@ export class NgbDropdown implements OnInit, OnDestroy {
       // remove the current placement classes
       renderer.removeClass(dropdownElement, 'dropup');
       renderer.removeClass(dropdownElement, 'dropdown');
-      this._menu.placement = placement;
+      menu.placement = this.display === 'static' ? null : placement;
 
       /*
       * apply the new placement

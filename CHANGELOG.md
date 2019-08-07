@@ -1,3 +1,122 @@
+# [5.1.0](https://github.com/ng-bootstrap/ng-bootstrap/compare/5.0.0...5.1.0) (2019-07-17)
+
+
+### Features
+
+* **carousel:** stay paused after calling pause() until cycle() is called ([#3225](https://github.com/ng-bootstrap/ng-bootstrap/issues/3225)) ([2602154](https://github.com/ng-bootstrap/ng-bootstrap/commit/2602154)), closes [#3188](https://github.com/ng-bootstrap/ng-bootstrap/issues/3188)
+
+  In order for the user to also have more control, we also introduce 2 new properties on [NgbSlideEvent](https://ng-bootstrap.github.io/#/components/carousel/api#NgbSlideEvent):
+
+  + The "_source_" property allowing to know what triggered the event: "_timer_", "_arrowLeft_", "_arrowRight_" or "_indicator_".
+  + The "_paused_" boolean status.
+
+### Bug Fixes
+
+* **datepicker:** ease the styling of datepicker ([#3248](https://github.com/ng-bootstrap/ng-bootstrap/issues/3248)) ([dd86266](https://github.com/ng-bootstrap/ng-bootstrap/commit/dd86266)), closes [#3244](https://github.com/ng-bootstrap/ng-bootstrap/issues/3244)
+* **datepicker:** NgbCalendarIslamicUmalqura.fromGregorian with date in the afternoon ([#3256](https://github.com/ng-bootstrap/ng-bootstrap/issues/3256)) ([cc29290](https://github.com/ng-bootstrap/ng-bootstrap/commit/cc29290)), closes [#3237](https://github.com/ng-bootstrap/ng-bootstrap/issues/3237)
+* **demo:** direct link to specific carousel sample not working ([#3272](https://github.com/ng-bootstrap/ng-bootstrap/issues/3272)) ([a6d73d6](https://github.com/ng-bootstrap/ng-bootstrap/commit/a6d73d6))
+* **dropdown:** allow template directive on the menu ([#3263](https://github.com/ng-bootstrap/ng-bootstrap/issues/3263)) ([8f73899](https://github.com/ng-bootstrap/ng-bootstrap/commit/8f73899))
+* **dropdown:** remove x-placement when display is static ([#3270](https://github.com/ng-bootstrap/ng-bootstrap/issues/3270)) ([c6ad5b7](https://github.com/ng-bootstrap/ng-bootstrap/commit/c6ad5b7))
+* **modal:** cmpt based content was not scrollable ([#3286](https://github.com/ng-bootstrap/ng-bootstrap/issues/3286)) ([ffbb4fd](https://github.com/ng-bootstrap/ng-bootstrap/commit/ffbb4fd)), closes [#3281](https://github.com/ng-bootstrap/ng-bootstrap/issues/3281)
+* **popover:** apply arrow styles to direct descendant ([#3288](https://github.com/ng-bootstrap/ng-bootstrap/issues/3288)) ([0b3ad65](https://github.com/ng-bootstrap/ng-bootstrap/commit/0b3ad65))
+* **stackblitz:** fixed version for prismjs ([#3282](https://github.com/ng-bootstrap/ng-bootstrap/issues/3282)) ([db72c7a](https://github.com/ng-bootstrap/ng-bootstrap/commit/db72c7a))
+* **tabset:** remove aria-expanded and use aria-selected instead ([#3292](https://github.com/ng-bootstrap/ng-bootstrap/issues/3292)) ([5b6cc69](https://github.com/ng-bootstrap/ng-bootstrap/commit/5b6cc69))
+* **toast:** proper handling of `autohide` toggling ([#3283](https://github.com/ng-bootstrap/ng-bootstrap/issues/3283)) ([ffcdad4](https://github.com/ng-bootstrap/ng-bootstrap/commit/ffcdad4)), closes [#3280](https://github.com/ng-bootstrap/ng-bootstrap/issues/3280)
+
+# [5.0.0](https://github.com/ng-bootstrap/ng-bootstrap/compare/5.0.0-rc.1...5.0.0) (2019-07-09)
+
+This major release is compatible with Angular ^8.0.0. We would like to emphasis that **it is not yet** fully compatible with Ivy renderer.
+
+### BREAKING CHANGES
+
+* for ng-bootstrap `5.0.0` minimal required version
+of Angular is `8.0.0`, and minimal required version of Bootstrap is `4.3.1`.
+
+# [5.0.0-rc.1](https://github.com/ng-bootstrap/ng-bootstrap/compare/5.0.0-rc.0...5.0.0-rc.1) (2019-06-28)
+
+This release requires Angular version ^8.0.0, Bootstrap ^4.3.1 and is **not yet** Ivy compatible.
+
+### Bug Fixes
+
+* **toast:** export NgbToastModule publicly ([#3259](https://github.com/ng-bootstrap/ng-bootstrap/issues/3259)) ([0d69682](https://github.com/ng-bootstrap/ng-bootstrap/commit/0d69682)), closes [#3258](https://github.com/ng-bootstrap/ng-bootstrap/issues/3258)
+
+
+### Features
+
+* **timepicker:** use Angular locale data for AM and PM ([#2830](https://github.com/ng-bootstrap/ng-bootstrap/issues/2830)) ([3ce8a4c](https://github.com/ng-bootstrap/ng-bootstrap/commit/3ce8a4c))
+
+
+
+# [5.0.0-rc.0](https://github.com/ng-bootstrap/ng-bootstrap/compare/4.2.1...5.0.0-rc.0) (2019-06-24)
+
+This release requires Angular version `^8.0.0`, Bootstrap `^4.3.1` and is **not yet** Ivy compatible.
+
+### Bug Fixes
+
+* **all widgets:** specify 'static' for ViewChild and ContentChild queries ([b3010ab](https://github.com/ng-bootstrap/ng-bootstrap/commit/b3010ab))
+* **demo:** missing `Object.values()` polyfill for IE. ([#3249](https://github.com/ng-bootstrap/ng-bootstrap/issues/3249)) ([0eff381](https://github.com/ng-bootstrap/ng-bootstrap/commit/0eff381))
+* **toast:** adds `static: true` for Angular 8 query compatibility ([#3250](https://github.com/ng-bootstrap/ng-bootstrap/issues/3250)) ([e682ee3](https://github.com/ng-bootstrap/ng-bootstrap/commit/e682ee3))
+
+
+### Code Refactoring
+
+* removes `.forRoot()` from all modules ([#3231](https://github.com/ng-bootstrap/ng-bootstrap/issues/3231)) ([83f79cf](https://github.com/ng-bootstrap/ng-bootstrap/commit/83f79cf)), closes [#3015](https://github.com/ng-bootstrap/ng-bootstrap/issues/3015)
+
+### Features
+
+* **modal:** add scrollable option ([#2909](https://github.com/ng-bootstrap/ng-bootstrap/issues/2909)) ([74fb795](https://github.com/ng-bootstrap/ng-bootstrap/commit/74fb795))
+* **modal:** Add xl size for modal ([#3239](https://github.com/ng-bootstrap/ng-bootstrap/issues/3239)) ([998f358](https://github.com/ng-bootstrap/ng-bootstrap/commit/998f358)), closes [#2943](https://github.com/ng-bootstrap/ng-bootstrap/issues/2943)
+* **toast:** Toast implementation ([#3103](https://github.com/ng-bootstrap/ng-bootstrap/issues/3103)) ([bd1e9fb](https://github.com/ng-bootstrap/ng-bootstrap/commit/bd1e9fb))
+
+
+### BREAKING CHANGES
+
+* for ng-bootstrap `5.0.0-rc.0` minimal required version
+of Angular is `8.0.0`, and minimal required version of Bootstrap is `4.3.1`.
+* Importing any ng-bootstrap module via `.forRoot()` has now been completely removed.
+The only supported way is the one documented in the [getting started](https://ng-bootstrap.github.io/#/getting-started#installation) page.
+
+```typescript
+import {NgbModule} from '@ng-bootstrap/ng-bootstrap';
+
+@NgModule({
+  ...
+  imports: [NgbModule, ...],
+  ...
+})
+export class YourAppModule {
+}
+```
+
+
+
+## [4.2.1](https://github.com/ng-bootstrap/ng-bootstrap/compare/4.2.0...4.2.1) (2019-06-03)
+
+
+### Reverts
+
+* **datepicker:** expose validators minDate, maxDate, invalidDate ([#3126](https://github.com/ng-bootstrap/ng-bootstrap/issues/3126)) ([509bba3](https://github.com/ng-bootstrap/ng-bootstrap/commit/509bba3)), closes [#3215](https://github.com/ng-bootstrap/ng-bootstrap/issues/3215)
+
+
+
+# [4.2.0](https://github.com/ng-bootstrap/ng-bootstrap/compare/4.1.3...4.2.0) (2019-05-29)
+
+
+### Bug Fixes
+
+* **positioning:** put the popup in a separate layer ([#3206](https://github.com/ng-bootstrap/ng-bootstrap/issues/3206)) ([2bbaaee](https://github.com/ng-bootstrap/ng-bootstrap/commit/2bbaaee))
+
+
+### Features
+
+* **datepicker:** add 'closed' event fired after datepicker window was closed ([#3055](https://github.com/ng-bootstrap/ng-bootstrap/issues/3055)) ([e31895e](https://github.com/ng-bootstrap/ng-bootstrap/commit/e31895e))
+* **datepicker:** add new 'positionTarget' input ([#3119](https://github.com/ng-bootstrap/ng-bootstrap/issues/3119)) ([42cef4f](https://github.com/ng-bootstrap/ng-bootstrap/commit/42cef4f))
+* **datepicker:** expose validators minDate, maxDate, invalidDate ([#3126](https://github.com/ng-bootstrap/ng-bootstrap/issues/3126)) ([509bba3](https://github.com/ng-bootstrap/ng-bootstrap/commit/509bba3))
+* **dropdown:** new 'display' input and navbar management ([#3098](https://github.com/ng-bootstrap/ng-bootstrap/issues/3098)) ([a07dbff](https://github.com/ng-bootstrap/ng-bootstrap/commit/a07dbff)), closes [#3030](https://github.com/ng-bootstrap/ng-bootstrap/issues/3030)
+* **highlight:** highlight array of terms instead of just one term ([#3154](https://github.com/ng-bootstrap/ng-bootstrap/issues/3154)) ([ec8a129](https://github.com/ng-bootstrap/ng-bootstrap/commit/ec8a129)), closes [#2698](https://github.com/ng-bootstrap/ng-bootstrap/issues/2698)
+
+
+
 ## [4.1.3](https://github.com/ng-bootstrap/ng-bootstrap/compare/4.1.2...4.1.3) (2019-05-13)
 
 
@@ -611,7 +730,7 @@ This is the first, stable release of ng-bootstrap!
 <a name="1.0.0-beta.9"></a>
 # [1.0.0-beta.9](https://github.com/ng-bootstrap/ng-bootstrap/compare/1.0.0-beta.8...1.0.0-beta.9) (2018-01-05)
 
-This release bumps up minimal Bootstrap CSS dependency to 4.0.0-beta.3. 
+This release bumps up minimal Bootstrap CSS dependency to 4.0.0-beta.3.
 
 
 ### Bug Fixes
@@ -643,7 +762,7 @@ This release bumps up minimal Bootstrap CSS dependency to 4.0.0-beta.3.
 # [1.0.0-beta.7](https://github.com/ng-bootstrap/ng-bootstrap/compare/1.0.0-beta.6...1.0.0-beta.7) (2017-12-08)
 
 
-This release bumps up minimal Angular dependency to 5.0.2. 
+This release bumps up minimal Angular dependency to 5.0.2.
 
 
 <a name="1.0.0-beta.6"></a>
@@ -1055,7 +1174,7 @@ or not.
 <a name="1.0.0-alpha.22"></a>
 # [1.0.0-alpha.22](https://github.com/ng-bootstrap/ng-bootstrap/compare/1.0.0-alpha.21...1.0.0-alpha.22) (2017-03-24)
 
-This is a small release that contains peerDependencies adjustments needed to support Angular 4.x. This library 
+This is a small release that contains peerDependencies adjustments needed to support Angular 4.x. This library
 was tested with the latest Angular and now fully supports both 4.x and 2.x.
 
 ### Bug Fixes
@@ -1116,7 +1235,7 @@ removed from this project. Just remove any references to the
 # [1.0.0-alpha.19](https://github.com/ng-bootstrap/ng-bootstrap/compare/1.0.0-alpha.18...1.0.0-alpha.19) (2017-01-25)
 
 This release comes with many improvements to the datepicker: better layout as well as look & feel.
-We are also bumping up minimal Angular version to 2.3.1 - this is required so we can provide better APIs for modal. 
+We are also bumping up minimal Angular version to 2.3.1 - this is required so we can provide better APIs for modal.
 
 ### Chores
 
@@ -1180,8 +1299,8 @@ This release adds full compatibility with Bootstrap CSS version 4.0.0-alpha.6!
 <a name="1.0.0-alpha.17"></a>
 # [1.0.0-alpha.17](https://github.com/ng-bootstrap/ng-bootstrap/compare/1.0.0-alpha.16...1.0.0-alpha.17) (2017-01-09)
 
-This is a very small release that restores TypeScript 1.8 compatibility. 
-Additionally it and fixes plunks to work with Bootstrap version 4.0.0-alpha.5 
+This is a very small release that restores TypeScript 1.8 compatibility.
+Additionally it and fixes plunks to work with Bootstrap version 4.0.0-alpha.5
 (this is in preparation for full support of Bootstrap 4.0.0-alpha.6)
 
 ### Bug Fixes
@@ -1363,8 +1482,8 @@ This is a very small release that fixes a problem in the generated Typescript de
 <a name="1.0.0-alpha.7"></a>
 # [1.0.0-alpha.7](https://github.com/ng-bootstrap/ng-bootstrap/compare/1.0.0-alpha.6...1.0.0-alpha.7) (2016-10-10)
 
-This release restores full AoT compatibility and has proper support for lazy-loaded `NgbModule`. On top of this we are 
-shipping a lot of new features and bug fixes - details below. 
+This release restores full AoT compatibility and has proper support for lazy-loaded `NgbModule`. On top of this we are
+shipping a lot of new features and bug fixes - details below.
 
 ### Bug Fixes
 
@@ -1398,7 +1517,7 @@ shipping a lot of new features and bug fixes - details below.
 
 Before:
 
-`0=Jan; 1=Feb; ... 11=Dec` 
+`0=Jan; 1=Feb; ... 11=Dec`
 
 `0=Sun; 1=Mon; ... 6=Sat`
 
@@ -1473,7 +1592,7 @@ After:
 # [1.0.0-alpha.5](https://github.com/ng-bootstrap/ng-bootstrap/compare/1.0.0-alpha.4...1.0.0-alpha.5) (2016-09-15)
 
 This release brings support for datepicker in popups - we believe that there is a solid widget here!
-Alpha.5 changes content of npm package to enable AoT compilation with tree-shaking.   
+Alpha.5 changes content of npm package to enable AoT compilation with tree-shaking.
 There are also small features and bug fixes for the existing widgets - see the details below.
 
 
@@ -1516,7 +1635,7 @@ If you are using SystemJS, you should adjust your configuration to point to the 
 <a name="1.0.0-alpha.4"></a>
 # [1.0.0-alpha.4](https://github.com/ng-bootstrap/ng-bootstrap/compare/1.0.0-alpha.3...1.0.0-alpha.4) (2016-09-07)
 
-This release brings a new component - datepicker! Additionally all widgets now support global config through an injectable service.  
+This release brings a new component - datepicker! Additionally all widgets now support global config through an injectable service.
 There are also small features and bug fixes for the existing widgets - see the details below.
 
 ### Bug Fixes
@@ -1551,7 +1670,7 @@ There are also small features and bug fixes for the existing widgets - see the d
 # [1.0.0-alpha.3](https://github.com/ng-bootstrap/ng-bootstrap/compare/1.0.0-alpha.2...1.0.0-alpha.3) (2016-08-30)
 
 This release adds support for the modal service. Cross-browser compatibility was reviewed and improved. We now support all the browsers supported by Angular 2 and Bootstrap, including IE9.
-There are also small features and bug fixes for the existing widgets - see the details below. 
+There are also small features and bug fixes for the existing widgets - see the details below.
 
 ### Bug Fixes
 
@@ -1569,7 +1688,7 @@ There are also small features and bug fixes for the existing widgets - see the d
 <a name="1.0.0-alpha.2"></a>
 # [1.0.0-alpha.2](https://github.com/ng-bootstrap/ng-bootstrap/compare/1.0.0-alpha.1...1.0.0-alpha.2) (2016-08-10)
 
-This release makes the code compatible with Angular 2.0.0-rc.5.  
+This release makes the code compatible with Angular 2.0.0-rc.5.
 There are also small features and bug fixes for the existing widgets - see the details below.
 
 ### Bug Fixes
@@ -1622,8 +1741,8 @@ There are also small features and bug fixes for the existing widgets - see the d
 
 ### BREAKING CHANGES
 
-* **accordion:** accordion implementation was overhauled to use cards instead of deprecated panels. Refer to the API docs and [demo page](https://ng-bootstrap.github.io/#/components/accordion) for more details.  
-* **pager:** support for the pager widget was removed as the result of its removal from Bootstrap's CSS.  
+* **accordion:** accordion implementation was overhauled to use cards instead of deprecated panels. Refer to the API docs and [demo page](https://ng-bootstrap.github.io/#/components/accordion) for more details.
+* **pager:** support for the pager widget was removed as the result of its removal from Bootstrap's CSS.
 
 
 <a name="1.0.0-alpha.0"></a>

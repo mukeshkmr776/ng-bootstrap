@@ -76,19 +76,18 @@ describe('ngb-tooltip', () => {
     it('should open and close a tooltip - default settings and content as string', () => {
       const fixture = createTestComponent(`<div ngbTooltip="Great tip!" style="margin-top: 100px;"></div>`);
       const directive = fixture.debugElement.query(By.directive(NgbTooltip));
-      const defaultConfig = new NgbTooltipConfig();
 
       triggerEvent(directive, 'mouseenter');
       fixture.detectChanges();
       const windowEl = getWindow(fixture.nativeElement);
+      const id = windowEl.getAttribute('id');
 
       expect(windowEl).toHaveCssClass('tooltip');
       expect(windowEl).toHaveCssClass('bs-tooltip-top');
       expect(windowEl.textContent.trim()).toBe('Great tip!');
       expect(windowEl.getAttribute('role')).toBe('tooltip');
-      expect(windowEl.getAttribute('id')).toBe('ngb-tooltip-0');
       expect(windowEl.parentNode).toBe(fixture.nativeElement);
-      expect(directive.nativeElement.getAttribute('aria-describedby')).toBe('ngb-tooltip-0');
+      expect(directive.nativeElement.getAttribute('aria-describedby')).toBe(id);
 
       triggerEvent(directive, 'mouseleave');
       fixture.detectChanges();
@@ -104,14 +103,14 @@ describe('ngb-tooltip', () => {
       triggerEvent(directive, 'mouseenter');
       fixture.detectChanges();
       const windowEl = getWindow(fixture.nativeElement);
+      const id = windowEl.getAttribute('id');
 
       expect(windowEl).toHaveCssClass('tooltip');
       expect(windowEl).toHaveCssClass('bs-tooltip-top');
       expect(windowEl.textContent.trim()).toBe('Hello, World!');
       expect(windowEl.getAttribute('role')).toBe('tooltip');
-      expect(windowEl.getAttribute('id')).toBe('ngb-tooltip-1');
       expect(windowEl.parentNode).toBe(fixture.nativeElement);
-      expect(directive.nativeElement.getAttribute('aria-describedby')).toBe('ngb-tooltip-1');
+      expect(directive.nativeElement.getAttribute('aria-describedby')).toBe(id);
 
       triggerEvent(directive, 'mouseleave');
       fixture.detectChanges();
@@ -127,14 +126,14 @@ describe('ngb-tooltip', () => {
       directive.context.tooltip.open({name: 'John'});
       fixture.detectChanges();
       const windowEl = getWindow(fixture.nativeElement);
+      const id = windowEl.getAttribute('id');
 
       expect(windowEl).toHaveCssClass('tooltip');
       expect(windowEl).toHaveCssClass('bs-tooltip-top');
       expect(windowEl.textContent.trim()).toBe('Hello, John!');
       expect(windowEl.getAttribute('role')).toBe('tooltip');
-      expect(windowEl.getAttribute('id')).toBe('ngb-tooltip-2');
       expect(windowEl.parentNode).toBe(fixture.nativeElement);
-      expect(directive.nativeElement.getAttribute('aria-describedby')).toBe('ngb-tooltip-2');
+      expect(directive.nativeElement.getAttribute('aria-describedby')).toBe(id);
 
       triggerEvent(directive, 'mouseleave');
       fixture.detectChanges();
@@ -150,15 +149,15 @@ describe('ngb-tooltip', () => {
       triggerEvent(directive, 'mouseenter');
       fixture.detectChanges();
       const windowEl = getWindow(fixture.nativeElement);
+      const id = windowEl.getAttribute('id');
 
       expect(windowEl).toHaveCssClass('tooltip');
       expect(windowEl).toHaveCssClass('bs-tooltip-top');
       expect(windowEl).toHaveCssClass('my-custom-class');
       expect(windowEl.textContent.trim()).toBe('Great tip!');
       expect(windowEl.getAttribute('role')).toBe('tooltip');
-      expect(windowEl.getAttribute('id')).toBe('ngb-tooltip-3');
       expect(windowEl.parentNode).toBe(fixture.nativeElement);
-      expect(directive.nativeElement.getAttribute('aria-describedby')).toBe('ngb-tooltip-3');
+      expect(directive.nativeElement.getAttribute('aria-describedby')).toBe(id);
 
       triggerEvent(directive, 'mouseleave');
       fixture.detectChanges();
@@ -640,7 +639,7 @@ export class TestComponent {
   name = 'World';
   show = true;
 
-  @ViewChild(NgbTooltip) tooltip: NgbTooltip;
+  @ViewChild(NgbTooltip, {static: true}) tooltip: NgbTooltip;
 
   shown() {}
   hidden() {}
@@ -659,7 +658,7 @@ export class TestOnPushComponent {
 
 @Component({selector: 'test-hooks', template: `<div ngbTooltip="tooltip"></div>`})
 export class TestHooksComponent implements AfterViewInit {
-  @ViewChild(NgbTooltip) tooltip;
+  @ViewChild(NgbTooltip, {static: true}) tooltip;
 
   ngAfterViewInit() { this.tooltip.open(); }
 }

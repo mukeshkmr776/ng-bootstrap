@@ -2,6 +2,9 @@ language: node_js
 node_js:
   - "10"
 
+services:
+  - xvfb
+
 env:
   global:
     - SAUCE_USERNAME=pkozlowski
@@ -11,10 +14,6 @@ env:
 
 addons:
   chrome: stable
-
-before_install:
-  - export DISPLAY=:99.0
-  - sh -e /etc/init.d/xvfb start
 
 install:
   - yarn
@@ -30,6 +29,7 @@ script:
   - yarn global add codecov && codecov --disable=gcov -f coverage/lcov.info -F unit && codecov --disable=gcov -f coverage-e2e/lcov.info -F e2e
   - ./scripts/sauce_connect_block.sh
   - yarn saucelabs
+  - yarn saucelabs:ie
 
 after_script:
   - ./scripts/sauce_connect_teardown.sh

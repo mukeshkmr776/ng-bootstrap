@@ -113,6 +113,25 @@ describe('ngb-dropdown', () => {
     const fixture = createTestComponent(html);
     const compiled = fixture.nativeElement;
 
+    fixture.detectChanges();
+    expect(getMenuEl(compiled).getAttribute('x-placement')).toBe('bottom-right');
+  });
+
+  it('should have x-placement attribute reflecting placement with a template', () => {
+
+    const html = `
+    <div ngbDropdown placement="bottom-right">
+      <button ngbDropdownAnchor></button>
+      <div *ngIf="true" ngbDropdownMenu>
+        <a class="dropdown-item">dropDown item</a>
+        <a class="dropdown-item">dropDown item</a>
+      </div>
+    </div>`;
+
+    const fixture = createTestComponent(html);
+    const compiled = fixture.nativeElement;
+
+    fixture.detectChanges();
     expect(getMenuEl(compiled).getAttribute('x-placement')).toBe('bottom-right');
   });
 
@@ -368,6 +387,7 @@ describe('ngb-dropdown-toggle', () => {
       const dropdownEl: HTMLElement = compiled.querySelector('[ngbdropdownmenu]');
 
       expect(dropdownEl.getAttribute('style')).toBeNull(`The dropdown element shouldn't have calculated styles`);
+      expect(dropdownEl.getAttribute('x-placement')).toBeNull(`The dropdown element shouldn't have x-placement set`);
 
     });
 

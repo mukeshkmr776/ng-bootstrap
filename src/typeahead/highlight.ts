@@ -30,28 +30,22 @@ export class NgbHighlight implements OnChanges {
    * The text highlighting is added to.
    *
    * If the `term` is found inside this text, it will be highlighted.
+   * If the `term` contains array then all the items from it will be highlighted inside the text.
    */
   @Input() result: string;
 
   /**
-   * The term to be highlighted.
+   * The term or array of terms to be highlighted.
+   * Since version `v4.2.0` term could be a `string[]`
    */
-  @Input() term: string;
+  @Input() term: string | string[];
 
   ngOnChanges(changes: SimpleChanges) {
-    const resultStr = toString(this.result);
-    const resultLC = resultStr.toLowerCase();
-    const termLC = toString(this.term).toLowerCase();
-    let currentIdx = 0;
+    const result = toString(this.result);
 
-    if (termLC.length > 0) {
-      this.parts = resultLC.split(new RegExp(`(${regExpEscape(termLC)})`)).map((part) => {
-        const originalPart = resultStr.substr(currentIdx, part.length);
-        currentIdx += part.length;
-        return originalPart;
-      });
-    } else {
-      this.parts = [resultStr];
-    }
+    const terms = Array.isArray(this.term) ? this.term : [this.term];
+    const escapedTerms = terms.map(term => regExpEscape(toString(term))).filter(term => term);
+
+    this.parts = escapedTerms.length ? result.split(new RegExp(`(${escapedTerms.join('|')})`, 'gmi')) : [result];
   }
 }

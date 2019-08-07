@@ -10,10 +10,8 @@ import {
   ViewChild
 } from '@angular/core';
 import {async, ComponentFixture, TestBed} from '@angular/core/testing';
-
 import {NgbModalConfig} from './modal-config';
 import {NgbActiveModal, NgbModal, NgbModalModule, NgbModalRef} from './modal.module';
-
 
 const NOOP = () => {};
 
@@ -803,6 +801,30 @@ describe('ngb-modal', () => {
       });
     });
 
+    describe('scrollable content', () => {
+
+      it('should render scrollable content modals', () => {
+        const modalInstance = fixture.componentInstance.open('foo', {scrollable: true});
+        fixture.detectChanges();
+        expect(fixture.nativeElement).toHaveModal('foo');
+        expect(document.querySelector('.modal-dialog')).toHaveCssClass('modal-dialog-scrollable');
+
+        modalInstance.close();
+        fixture.detectChanges();
+        expect(fixture.nativeElement).not.toHaveModal();
+      });
+
+      it('should add specific styling to content component host', () => {
+        const modalInstance = fixture.componentInstance.openCmpt(DestroyableCmpt, {scrollable: true});
+        fixture.detectChanges();
+        expect(document.querySelector('destroyable-cmpt')).toHaveCssClass('component-host-scrollable');
+
+        modalInstance.close();
+        fixture.detectChanges();
+        expect(fixture.nativeElement).not.toHaveModal();
+      });
+    });
+
     describe('accessibility', () => {
 
       it('should support aria-labelledby', () => {
@@ -1060,12 +1082,12 @@ class TestComponent {
   name = 'World';
   openedModal: NgbModalRef;
   show = true;
-  @ViewChild('content') tplContent;
-  @ViewChild('destroyableContent') tplDestroyableContent;
-  @ViewChild('contentWithClose') tplContentWithClose;
-  @ViewChild('contentWithDismiss') tplContentWithDismiss;
-  @ViewChild('contentWithImplicitContext') tplContentWithImplicitContext;
-  @ViewChild('contentWithIf') tplContentWithIf;
+  @ViewChild('content', {static: true}) tplContent;
+  @ViewChild('destroyableContent', {static: true}) tplDestroyableContent;
+  @ViewChild('contentWithClose', {static: true}) tplContentWithClose;
+  @ViewChild('contentWithDismiss', {static: true}) tplContentWithDismiss;
+  @ViewChild('contentWithImplicitContext', {static: true}) tplContentWithImplicitContext;
+  @ViewChild('contentWithIf', {static: true}) tplContentWithIf;
 
   constructor(public modalService: NgbModal) {}
 
