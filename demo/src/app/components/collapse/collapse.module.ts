@@ -7,13 +7,21 @@ import { NgbdApiPage } from '../shared/api-page/api.component';
 import { NgbdExamplesPage } from '../shared/examples-page/examples.component';
 import { NgbdCollapseBasic } from './demos/basic/collapse-basic';
 import { NgbdCollapseBasicModule } from './demos/basic/collapse-basic.module';
+import { NgbdCollapseNavbar } from './demos/navbar/collapse-navbar';
+import { NgbdCollapseNavbarModule } from './demos/navbar/collapse-navbar.module';
 
 const DEMOS = {
   basic: {
     title: 'Collapse',
     type: NgbdCollapseBasic,
-    code: require('!!raw-loader!./demos/basic/collapse-basic'),
-    markup: require('!!raw-loader!./demos/basic/collapse-basic.html')
+    code: require('!!raw-loader!./demos/basic/collapse-basic').default,
+    markup: require('!!raw-loader!./demos/basic/collapse-basic.html').default
+  },
+  navbar: {
+    title: 'Responsive Navbar',
+    type: NgbdCollapseNavbar,
+    code: require('!!raw-loader!./demos/navbar/collapse-navbar').default,
+    markup: require('!!raw-loader!./demos/navbar/collapse-navbar.html').default
   }
 };
 
@@ -22,6 +30,9 @@ export const ROUTES = [
   {
     path: '',
     component: ComponentWrapper,
+    data: {
+      bootstrap: 'https://getbootstrap.com/docs/%version%/components/collapse/'
+    },
     children: [
       { path: 'examples', component: NgbdExamplesPage },
       { path: 'api', component: NgbdApiPage }
@@ -33,7 +44,8 @@ export const ROUTES = [
   imports: [
     NgbdSharedModule,
     NgbdComponentsSharedModule,
-    NgbdCollapseBasicModule
+    NgbdCollapseBasicModule,
+    NgbdCollapseNavbarModule
   ]
 })
 export class NgbdCollapseModule {
